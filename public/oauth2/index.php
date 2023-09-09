@@ -1,7 +1,7 @@
 <?php
 $query = http_build_query(array(
-    'client_id' => '1',
-    'redirect_uri' => 'http://identityprovider.localhost/oauth2_client/callback.php',
+    'client_id' => '3',
+    'redirect_uri' => 'http://identityprovider.localhost/oauth2/callback.php',
     'response_type' => 'code',
     'scope' => '',
 ));
