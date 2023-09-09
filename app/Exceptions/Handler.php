@@ -27,4 +27,18 @@ class Handler extends ExceptionHandler
             //
         });
     }
+
+    public function render($request, Throwable $exception)
+    {
+        if ($exception instanceof Api422Exception) {
+
+            return response()->json([
+                'success' => false,
+                'errors' => json_decode($exception->getMessage()),
+                'data' => []
+            ], 422);
+        }
+
+        return parent::render($request, $exception);
+    }
 }
