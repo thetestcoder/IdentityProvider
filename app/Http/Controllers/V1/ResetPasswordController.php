@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\V1;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\APIBaseController;
 use App\Http\Requests\V1\ResetPasswordRequest;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Password;
 
-class ResetPasswordController extends Controller
+class ResetPasswordController extends APIBaseController
 {
     public function reset(ResetPasswordRequest $request)
     {
@@ -22,13 +21,13 @@ class ResetPasswordController extends Controller
             });
 
             if ($response === Password::PASSWORD_RESET) {
-                return response()->json(['message' => 'Password reset successful']);
+                return $this->successMessage( 'Password reset successful');
             } else {
-                return response()->json(['error' => 'Password reset failed'], 500);
+                return $this->errorMessage('Password reset failed', 500);
             }
         }catch (\Exception $e) {
             Log::error($e);
-            return response()->json(['message' => 'Something went wrong!'], 500);
+            return $this->errorMessage( $e->getMessage(), $e->getCode());
         }
     }
 }

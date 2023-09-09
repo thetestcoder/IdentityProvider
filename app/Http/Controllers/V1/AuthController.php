@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers\V1;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\APIBaseController;
 use App\Http\Requests\V1\ChangePasswordRequest;
 use App\Http\Requests\V1\LoginRequest;
 use App\Http\Requests\V1\RegisterRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
-class AuthController extends Controller
+class AuthController extends APIBaseController
 {
     public function register(RegisterRequest $request)
     {
@@ -26,10 +25,10 @@ class AuthController extends Controller
 
           $token = $user->createToken(str_replace(" ", "", config('app.name')))->accessToken;
 
-          return response()->json(['token' => $token], 201);
+          return $this->successMessage( ['token' => $token]);
       }catch (\Exception $e){
           Log::error($e);
-          return response()->json(['message' => 'Something went wrong!'], 500);
+          return $this->errorMessage( $e->getMessage(), $e->getCode());
       }
     }
 
@@ -39,13 +38,13 @@ class AuthController extends Controller
            if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
                $user = Auth::user();
                $token = $user->createToken(str_replace(" ", "", config('app.name')))->accessToken;
-               return response()->json(['token' => $token]);
+               return $this->successMessage(['token' => $token]);
            } else {
-               return response()->json(['error' => 'Unauthorized'], 401);
+               return $this->errorMessage( 'Unauthorized',401);
            }
        }catch (\Exception $e){
            Log::error($e);
-           return response()->json(['message' => 'Something went wrong!'], 500);
+           return $this->errorMessage( $e->getMessage(), $e->getCode());
        }
     }
 
@@ -55,16 +54,16 @@ class AuthController extends Controller
             $user = Auth::user();
 
             if (!password_verify($request->old_password, $user->password)) {
-                return response()->json(['error' => 'Incorrect old password'], 401);
+                return $this->errorMessage(  'Incorrect old password',401);
             }
 
             $user->password = bcrypt($request->new_password);
             $user->save();
 
-            return response()->json(['message' => 'Password changed successfully']);
+            return $this->successMessage('Password changed successfully');
         }catch (\Exception $e) {
             Log::error($e);
-            return response()->json(['message' => 'Something went wrong!'], 500);
+            return $this->errorMessage($e->getMessage(), $e->getCode());
         }
     }
 }
