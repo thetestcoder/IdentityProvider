@@ -12,6 +12,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
+        $schedule->command('passport:purge --hours=168')->daily();
         // $schedule->command('inspire')->hourly();
     }
 
