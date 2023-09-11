@@ -1,12 +1,14 @@
 # Identity Provider
 
+Identity Provider is an open-source authentication and authorization service designed to secure access to your applications and services. It offers robust identity management and user authentication capabilities, making it a reliable choice for securing your digital assets.
+
+
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![GitHub Issues](https://img.shields.io/github/issues/thetestcoder/IdentityProvider.svg)](https://github.com/thetestcoder/IdentityProvider/issues)
 [![GitHub Pull Requests](https://img.shields.io/github/issues-pr/thetestcoder/IdentityProvider.svg)](https://github.com/thetestcoder/IdentityProvider/pulls)
 
 Welcome to the Identity Provider repository! We appreciate your interest in contributing. This guide will help you get started with contributing to our project. Please take a moment to review this document before you begin.
 This is a Identity Provider project configured with Passport for centralized identity management. It provides user registration, authentication, password reset, and password change functionality.
-
 ## Table of Contents
 
 - [Getting Started](#getting-started)
