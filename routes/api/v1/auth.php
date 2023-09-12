@@ -21,4 +21,5 @@ Route::post('password/reset', [ResetPasswordController::class, 'reset']);
 // Password Change (Protected Route)
 Route::middleware('auth:api')->group(function () {
     Route::post('password/change', [AuthController::class, 'changePassword']);
+    Route::get('checkauth',[AuthController::class,'checkAuth']);
 });
