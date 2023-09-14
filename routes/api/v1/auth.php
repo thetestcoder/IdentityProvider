@@ -22,3 +22,6 @@ Route::post('password/reset', [ResetPasswordController::class, 'reset']);
 Route::middleware('auth:api')->group(function () {
     Route::post('password/change', [AuthController::class, 'changePassword']);
 });
+
+// Social login api
+Route::post('social-login', [AuthController::class, 'attemptSocialLogin']);
