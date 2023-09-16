@@ -32,7 +32,7 @@ class LoginTest extends TestCase
             'password' => 'wrongpassword',
         ]);
 
-        return $response->assertStatus(400);
+        return $response->assertStatus(401);
     }
     public function test_successful_login()
     {

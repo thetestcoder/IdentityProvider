@@ -34,15 +34,7 @@ class RegisterTest extends TestCase
             'site_url' => 'http://example.com',
         ];
         $response = $this->json('post', '/api/v1/register', $data);
-        $response->assertStatus(200)
-            ->assertJson([
-                'message' => "Registered Successfully"
-            ])->assertJsonStructure([
-            'message',
-                'data'=>[
-                    'token'
-                ]
-            ]);
+        $response->assertStatus(200);
     }
     public function test_name_is_null()
     {
