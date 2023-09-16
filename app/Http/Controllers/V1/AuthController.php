@@ -19,16 +19,17 @@ class AuthController extends APIBaseController
               'name' => $request->name,
               'email' => $request->email,
               'password' => bcrypt($request->password),
-              'site_url' => $request->site_url
+              'signup_url' => $request->site_url
           ]);
           $user->save();
 
           $token = $user->createToken(str_replace(" ", "", config('app.name')))->accessToken;
 
           return $this->successMessage("Registered Successfully",  ['token' => $token]);
+
       }catch (\Exception $e){
           Log::error($e);
-          return $this->errorMessage( $e->getMessage(), $e->getCode());
+          return $this->errorMessage( $e->getMessage());
       }
     }
 
@@ -65,5 +66,10 @@ class AuthController extends APIBaseController
             Log::error($e);
             return $this->errorMessage($e->getMessage(), $e->getCode());
         }
+    }
+
+    public function checkAuth()
+    {
+        return $this->successMessage('Authenticated');
     }
 }
