@@ -27,7 +27,8 @@ class ChangePasswordTest extends TestCase
             'email' => 'test@gmail.com',
             'password' => bcrypt('12345678')
         ]);
-        $token = $user->createToken('TestToken')->accessToken;
+        $token = $user->createToken('TestToken')->accessToken?->token;
+//        dd($token);
         $data = [
             'old_password' => '12345678',
             'new_password' => '87654321',
