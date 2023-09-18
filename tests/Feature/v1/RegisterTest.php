@@ -13,7 +13,9 @@ class RegisterTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        Passport::generatePersonAccessToken();
+        \Artisan::call('migrate',['-vvv' => true]);
+        \Artisan::call('passport:install',['-vvv' => true]);
+        \Artisan::call('db:seed',['-vvv' => true]);
     }
 
     public function test_empty_register(): void
