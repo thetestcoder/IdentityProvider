@@ -40,7 +40,7 @@ class AuthController extends APIBaseController
                $token = $user->createToken(str_replace(" ", "", config('app.name')))->accessToken;
                return $this->successMessage(['token' => $token],200);
            } else {
-               return $this->errorMessage( 'Unauthorized',401);
+               return $this->errorMessage( 'Unauthorized',400);
            }
        }catch (\Exception $e){
            Log::error($e);
