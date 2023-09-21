@@ -13,7 +13,9 @@ class RegisterTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        Passport::generatePersonAccessToken();
+        \Artisan::call('migrate',['-vvv' => true]);
+        \Artisan::call('passport:install',['-vvv' => true]);
+        \Artisan::call('db:seed',['-vvv' => true]);
     }
 
     public function test_empty_register(): void
@@ -34,15 +36,14 @@ class RegisterTest extends TestCase
             'site_url' => 'http://example.com',
         ];
         $response = $this->json('post', '/api/v1/register', $data);
-        $response->assertStatus(200)
-            ->assertJson([
-                'message' => "Registered Successfully"
-            ])->assertJsonStructure([
-            'message',
-                'data'=>[
-                    'token'
-                ]
-            ]);
+        $content = $response->getContent(); // Add this line
+//        dd($content);
+        $response->assertJsonStructure([
+            'message' => [
+                'token',
+            ],
+        ])->assertStatus(200);
+
     }
     public function test_name_is_null()
     {

@@ -16,7 +16,9 @@ class ChangePasswordTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        Passport::generatePersonAccessToken();
+        \Artisan::call('migrate',['-vvv' => true]);
+        \Artisan::call('passport:install',['-vvv' => true]);
+        \Artisan::call('db:seed',['-vvv' => true]);
     }
     /** @test */
     public function test_changes_password()
@@ -28,6 +30,7 @@ class ChangePasswordTest extends TestCase
             'password' => bcrypt('12345678')
         ]);
         $token = $user->createToken('TestToken')->accessToken;
+//        dd($token);
         $data = [
             'old_password' => '12345678',
             'new_password' => '87654321',

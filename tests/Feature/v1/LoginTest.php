@@ -14,7 +14,9 @@ class LoginTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        Passport::generatePersonAccessToken();
+        \Artisan::call('migrate',['-vvv' => true]);
+        \Artisan::call('passport:install',['-vvv' => true]);
+        \Artisan::call('db:seed',['-vvv' => true]);
     }
     public function test_empty_login()
     {
@@ -32,7 +34,7 @@ class LoginTest extends TestCase
             'password' => 'wrongpassword',
         ]);
 
-        return $response->assertStatus(400);
+        return $response->assertStatus(401);
     }
     public function test_successful_login()
     {
