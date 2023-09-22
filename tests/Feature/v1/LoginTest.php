@@ -38,7 +38,6 @@ class LoginTest extends TestCase
             'email' => 'test@example.com',
             'password' => 'wrongpasswowrd',
         ]);
-        dd($response);
         return $response->assertStatus(401);
     }
     public function test_successful_login()
