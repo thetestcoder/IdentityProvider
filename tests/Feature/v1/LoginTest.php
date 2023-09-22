@@ -29,11 +29,15 @@ class LoginTest extends TestCase
     }
     public function test_invalid_login()
     {
-        $response = $this->post('/api/v1/login', [
-            'email' => 'invalid@example.com',
-            'password' => 'wrongpassword',
+        $user = User::create([
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'password' => bcrypt('password123'),
         ]);
-
+        $response = $this->post('/api/v1/login', [
+            'email' => 'test@example.com',
+            'password' => 'wrongpasswowrd',
+        ]);
         return $response->assertStatus(401);
     }
     public function test_successful_login()
