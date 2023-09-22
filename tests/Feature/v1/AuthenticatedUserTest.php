@@ -32,7 +32,7 @@ class AuthenticatedUserTest extends TestCase
 
         $data = json_decode($response->getContent(), true);
 
-        $token = $data['message']['token'];
+        $token = $data['data']['token'];
 
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,

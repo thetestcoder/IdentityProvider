@@ -25,7 +25,7 @@ class AuthController extends APIBaseController
 
           $token = $user->createToken(str_replace(" ", "", config('app.name')))->accessToken;
 
-          return $this->successMessage( ['token' => $token],[], 200);
+          return $this->successMessage('Token generated successfully', ['token' => $token],200);
       }catch (\Exception $e){
           Log::error($e);
           return $this->errorMessage( $e->getMessage());
@@ -38,7 +38,8 @@ class AuthController extends APIBaseController
            if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
                $user = Auth::user();
                $token = $user->createToken(str_replace(" ", "", config('app.name')))->accessToken;
-               return $this->successMessage(['token' => $token], [],200);
+
+               return $this->successMessage('Token generated successfully', ['token' => $token],200);
            } else {
                return $this->errorMessage( 'Unauthorized',401);
            }

@@ -37,9 +37,10 @@ class RegisterTest extends TestCase
         ];
         $response = $this->json('post', '/api/v1/register', $data);
         $content = $response->getContent(); // Add this line
-//        dd($content);
+       // dd($content);
         $response->assertJsonStructure([
-            'message' => [
+            'message',
+            'data' => [
                 'token',
             ],
         ])->assertStatus(200);

@@ -24,7 +24,6 @@ class LoginTest extends TestCase
             'email' => '',
             'password' => '',
         ]);
-//        dd($response);
         return $response->assertStatus(422);
     }
     public function test_invalid_login()
