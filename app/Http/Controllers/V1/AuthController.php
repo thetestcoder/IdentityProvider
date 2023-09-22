@@ -20,16 +20,16 @@ class AuthController extends APIBaseController
               'name' => $request->name,
               'email' => $request->email,
               'password' => bcrypt($request->password),
-              'site_url' => $request->site_url
+              'signup_url' => $request->site_url
           ]);
           $user->save();
 
           $token = $user->createToken(str_replace(" ", "", config('app.name')))->accessToken;
 
-          return $this->successMessage( ['token' => $token]);
+          return $this->successMessage('Token generated successfully', ['token' => $token],200);
       }catch (\Exception $e){
           Log::error($e);
-          return $this->errorMessage( $e->getMessage(), $e->getCode());
+          return $this->errorMessage( $e->getMessage());
       }
     }
 
@@ -39,7 +39,8 @@ class AuthController extends APIBaseController
            if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
                $user = Auth::user();
                $token = $user->createToken(str_replace(" ", "", config('app.name')))->accessToken;
-               return $this->successMessage(['token' => $token]);
+
+               return $this->successMessage('Token generated successfully', ['token' => $token],200);
            } else {
                return $this->errorMessage( 'Unauthorized',401);
            }
@@ -99,9 +100,24 @@ class AuthController extends APIBaseController
                 'user' => $finduser,
                 'access_token' => $token
             ];
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             Log::error($e);
             return $this->errorMessage($e->getMessage(), $e->getCode());
         }
+    }
+
+    public function me()
+    {
+        try {
+            return $this->successMessage('Data retrieved successfully', Auth::user());
+        }catch (\Exception $e) {
+            Log::error($e);
+            return $this->errorMessage($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function checkAuth()
+    {
+        return $this->successMessage('Authenticated');
     }
 }
