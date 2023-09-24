@@ -24,3 +24,6 @@ Route::middleware('auth:api')->group(function () {
     Route::post('me', [AuthController::class, 'me']);
     Route::get('checkauth',[AuthController::class,'checkAuth']);
 });
+
+// Social login api
+Route::post('social-login', [AuthController::class, 'attemptSocialLogin']);

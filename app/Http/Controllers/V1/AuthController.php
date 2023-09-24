@@ -6,6 +6,7 @@ use App\Http\Controllers\APIBaseController;
 use App\Http\Requests\V1\ChangePasswordRequest;
 use App\Http\Requests\V1\LoginRequest;
 use App\Http\Requests\V1\RegisterRequest;
+use App\Http\Requests\V1\SocialLoginRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -63,6 +64,43 @@ class AuthController extends APIBaseController
 
             return $this->successMessage('Password changed successfully');
         }catch (\Exception $e) {
+            Log::error($e);
+            return $this->errorMessage($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function attemptSocialLogin(SocialLoginRequest $request)
+    {
+        try {
+            $user = User::firstOrCreate(['email' => $request->email, 'name' => $request->name]);
+            $token = $user->createToken(str_replace(" ", "", config('app.name')))->accessToken;
+
+            $finduser = User::where('firebase_auth_id', $request->firebase_auth_id)->first();
+
+            if(!$finduser){
+                $finduser = User::where('email', $request->email)->first();
+
+                if(!empty($finduser)) {
+                    if($finduser->firebase_auth_id != $request->firebase_auth_id)
+                    {
+                        // Update firebase social login id
+                        $finduser = User::where('id',$finduser->id)->update([
+                            'firebase_auth_id' => $request->firebase_auth_id
+                        ]);
+                    }
+                } else {
+                    $finduser = User::create([
+                        'email' => $request->email,
+                        'firebase_auth_id' => $request->firebase_auth_id,
+                        'name' => $request->name
+                    ]);
+                }
+            }
+            return [
+                'user' => $finduser,
+                'access_token' => $token
+            ];
+        } catch (\Exception $e) {
             Log::error($e);
             return $this->errorMessage($e->getMessage(), $e->getCode());
         }
