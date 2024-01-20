@@ -21,7 +21,7 @@ class AuthController extends APIBaseController
                 'email' => $request->email,
                 'password' => bcrypt($request->password),
                 'signup_url' => $request->site_url,
-                'is_user' => isset($request->is_user)? 1 : 0
+                'is_user' => $request->is_user ?? 1;
             ]);
             $user->save();
 
