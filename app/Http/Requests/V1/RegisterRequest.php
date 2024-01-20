@@ -13,7 +13,8 @@ class RegisterRequest  extends APIFormRequest
             'name' => 'required|string',
             'email' => 'required|email|unique:users',
             'password' => 'required|string|min:6|confirmed',
-            'site_url' => 'string|nullable'
+            'site_url' => 'string|nullable',
+            'is_user' => 'required|in:0,1'
         ];
     }
 }

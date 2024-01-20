@@ -15,18 +15,19 @@ class AuthController extends APIBaseController
 {
     public function register(RegisterRequest $request)
     {
-      try {
-          $user = new User([
-              'name' => $request->name,
-              'email' => $request->email,
-              'password' => bcrypt($request->password),
-              'signup_url' => $request->site_url
-          ]);
-          $user->save();
+        try {
+            $user = new User([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => bcrypt($request->password),
+                'signup_url' => $request->site_url,
+                'is_user' => ($request->is_user == 0) ? 0 : 1
+            ]);
+            $user->save();
 
-          $token = $user->createToken(str_replace(" ", "", config('app.name')))->accessToken;
+            $token = $user->createToken(str_replace(" ", "", config('app.name')))->accessToken;
 
-          return $this->successMessage('Token generated successfully', ['token' => $token],200);
+            return $this->successMessage('Token generated successfully', ['token' => $token],200);
       }catch (\Exception $e){
           Log::error($e);
           return $this->errorMessage( $e->getMessage());
