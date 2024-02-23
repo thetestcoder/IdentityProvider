@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\APIBaseController;
 use App\Http\Requests\V1\ChangePasswordRequest;
+use App\Http\Requests\V1\UpdatePasswordRequest;
 use App\Http\Requests\V1\LoginRequest;
 use App\Http\Requests\V1\RegisterRequest;
 use App\Http\Requests\V1\SocialLoginRequest;
@@ -57,8 +58,23 @@ class AuthController extends APIBaseController
             $user = Auth::user();
 
             if (!password_verify($request->old_password, $user->password)) {
-                return $this->errorMessage(  'Incorrect old password',401);
+                return $this->errorMessage('Incorrect old password',401);
             }
+
+            $user->password = bcrypt($request->new_password);
+            $user->save();
+
+            return $this->successMessage('Password changed successfully');
+        }catch (\Exception $e) {
+            Log::error($e);
+            return $this->errorMessage($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function updatePassword(UpdatePasswordRequest $request)
+    {
+        try {
+            $user = Auth::user();
 
             $user->password = bcrypt($request->new_password);
             $user->save();
