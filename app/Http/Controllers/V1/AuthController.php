@@ -38,6 +38,10 @@ class AuthController extends APIBaseController
     public function login(LoginRequest $request)
     {
        try {
+           $user = User::where('email', $request->email)->first();
+           if(!$user){
+               return $this->errorMessage('Unauthorized User', 422);
+           }
            if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
                $user = Auth::user();
                $token = $user->createToken(str_replace(" ", "", config('app.name')))->accessToken;
