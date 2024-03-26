@@ -105,27 +105,31 @@ class AuthController extends APIBaseController
             
             $token = $user->createToken(str_replace(" ", "", config('app.name')))->accessToken;
 
-            $finduser = User::where('firebase_auth_id', $request->firebase_auth_id)->first();
+            if($request->firebase_auth_id){
+                $finduser = User::where('firebase_auth_id', $request->firebase_auth_id)->first();
 
-            if(!$finduser){
-                $finduser = User::where('email', $request->email)->first();
-
-                if(!empty($finduser)) {
-                    if($finduser->firebase_auth_id != $request->firebase_auth_id)
-                    {
-                        // Update firebase social login id
-                        $finduser = User::where('id',$finduser->id)->update([
-                            'firebase_auth_id' => $request->firebase_auth_id
+                if(!$finduser){
+                    $finduser = User::where('email', $request->email)->first();
+    
+                    if(!empty($finduser)) {
+                        if($finduser->firebase_auth_id != $request->firebase_auth_id)
+                        {
+                            // Update firebase social login id
+                            $finduser = User::where('id',$finduser->id)->update([
+                                'firebase_auth_id' => $request->firebase_auth_id
+                            ]);
+                        }
+                    } else {
+                        $finduser = User::create([
+                            'email' => $request->email,
+                            'firebase_auth_id' => $request->firebase_auth_id,
+                            'name' => $request->name
                         ]);
                     }
-                } else {
-                    $finduser = User::create([
-                        'email' => $request->email,
-                        'firebase_auth_id' => $request->firebase_auth_id,
-                        'name' => $request->name
-                    ]);
                 }
             }
+
+            
             return [
                 'user' => $finduser,
                 'access_token' => $token
