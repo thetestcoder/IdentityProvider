@@ -131,7 +131,7 @@ class AuthController extends APIBaseController
 
             
             return [
-                'user' => $finduser,
+                'user' => isset($finduser) ? $finduser : $user,
                 'access_token' => $token
             ];
         } catch (\Exception $e) {
