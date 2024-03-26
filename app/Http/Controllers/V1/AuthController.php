@@ -93,7 +93,16 @@ class AuthController extends APIBaseController
     public function attemptSocialLogin(SocialLoginRequest $request)
     {
         try {
-            $user = User::firstOrCreate(['email' => $request->email], ['email' => $request->email, 'name' => $request->name]);
+            $user = User::whereEmail($request->email)->first();
+
+            if(!$user){
+                $user = new User;
+                $user->email = $request->email;
+                $user->name = $request->name ?? $request->email;
+                $user->save();
+            }
+
+            
             $token = $user->createToken(str_replace(" ", "", config('app.name')))->accessToken;
 
             $finduser = User::where('firebase_auth_id', $request->firebase_auth_id)->first();
