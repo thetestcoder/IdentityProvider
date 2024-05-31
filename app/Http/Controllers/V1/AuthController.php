@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\V1;
 
+use App\Enums\UserTypeEnum;
 use App\Http\Controllers\APIBaseController;
+use App\Http\Requests\UpdatePasswordByAdminRequest;
 use App\Http\Requests\V1\ChangePasswordRequest;
 use App\Http\Requests\V1\UpdatePasswordRequest;
 use App\Http\Requests\V1\LoginRequest;
@@ -90,6 +92,28 @@ class AuthController extends APIBaseController
         }
     }
 
+    public function updatePasswordByAdmin(UpdatePasswordByAdminRequest $request)
+    {
+        try {
+            $admin_user = Auth::user();
+            $user = User::where('email', $request->email)->first();
+
+            if ($admin_user->is_user == UserTypeEnum::getValue("ADMIN")){
+                if (!$user) {
+                    throw new \Exception("User Not found");
+                }
+                $user->password = bcrypt($request->password);
+                $user->save();
+                return $this->successMessage('Password changed successfully');
+            }else{
+                throw new \Exception("Only admin user can change password");
+            }
+        }catch (\Exception $e) {
+            Log::error($e);
+            return $this->errorMessage($e->getMessage(), $e->getCode());
+        }
+    }
+
     public function attemptSocialLogin(SocialLoginRequest $request)
     {
         try {
@@ -102,7 +126,7 @@ class AuthController extends APIBaseController
                 $user->save();
             }
 
-            
+
             $token = $user->createToken(str_replace(" ", "", config('app.name')))->accessToken;
 
             if($request->firebase_auth_id){
@@ -110,7 +134,7 @@ class AuthController extends APIBaseController
 
                 if(!$finduser){
                     $finduser = User::where('email', $request->email)->first();
-    
+
                     if(!empty($finduser)) {
                         if($finduser->firebase_auth_id != $request->firebase_auth_id)
                         {
@@ -129,7 +153,7 @@ class AuthController extends APIBaseController
                 }
             }
 
-            
+
             return [
                 'user' => isset($finduser) ? $finduser : $user,
                 'access_token' => $token
