@@ -12,13 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $keyExists = \DB::select(
-                    'SHOW KEYS
-                    FROM users
-                    WHERE Key_name=\'users_email_unique\''
-            );
-            if(count($keyExists)>0)
-                $table->dropIndex('users_email_unique');
+            // $keyExists = \DB::select(
+            //         'SHOW KEYS
+            //         FROM users
+            //         WHERE Key_name=\'users_email_unique\''
+            // );
+            // if(count($keyExists)>0)
+            $table->dropIndex('users_email_unique');
             $table->unsignedBigInteger('agency_id')->default(0)->after('id');
             $table->unique(['agency_id', 'email']);
         });
