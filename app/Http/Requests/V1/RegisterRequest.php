@@ -11,9 +11,9 @@ class RegisterRequest  extends APIFormRequest
     {
         return [
             'name' => 'required|string',
-            'email' => 'required|email|unique:users',
+            'email' => 'required|email|unique:users,email,NULL,id,agency_id,'.request('agency_id',0),
             'password' => 'required|string|min:6|confirmed',
-            'site_url' => 'string|nullable'
+            'site_url' => 'string|nullable',
         ];
     }
 }

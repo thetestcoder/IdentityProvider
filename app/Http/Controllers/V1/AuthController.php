@@ -24,7 +24,8 @@ class AuthController extends APIBaseController
                 'email' => $request->email,
                 'password' => bcrypt($request->password),
                 'signup_url' => $request->site_url,
-                'is_user' => $request->is_user ?? 1
+                'is_user' => $request->is_user ?? 1,
+                'agency_id' => $request->agency_id ?? 0,
             ]);
             $user->save();
 
@@ -44,7 +45,7 @@ class AuthController extends APIBaseController
            if(!$user){
                return $this->errorMessage('Unauthorized User', 422);
            }
-           if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+           if (Auth::attempt(['agency_id' => $request->agency_id ?? 0, 'email' => $request->email, 'password' => $request->password])) {
                $user = Auth::user();
                $token = $user->createToken(str_replace(" ", "", config('app.name')))->accessToken;
 
