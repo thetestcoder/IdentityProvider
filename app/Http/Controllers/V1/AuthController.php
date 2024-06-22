@@ -97,7 +97,7 @@ class AuthController extends APIBaseController
     {
         try {
             $admin_user = Auth::user();
-            $user = User::where('agency_id' , $request->agency_id ?? 0)->where('email', $request->email)->first();
+            $user = User::where('agency_id' , $admin_user->agency_id)->where('email', $request->email)->first();
 
             if ($admin_user->is_user == UserTypeEnum::getValue("ADMIN")){
                 if (!$user) {
