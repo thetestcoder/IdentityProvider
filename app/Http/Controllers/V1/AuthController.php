@@ -97,7 +97,7 @@ class AuthController extends APIBaseController
     {
         try {
             $admin_user = Auth::user();
-            $user = User::where('email', $request->email)->first();
+            $user = User::where('agency_id' , $request->agency_id ?? 0)->where('email', $request->email)->first();
 
             if ($admin_user->is_user == UserTypeEnum::getValue("ADMIN")){
                 if (!$user) {
@@ -118,12 +118,13 @@ class AuthController extends APIBaseController
     public function attemptSocialLogin(SocialLoginRequest $request)
     {
         try {
-            $user = User::whereEmail($request->email)->first();
+            $user = User::where('agency_id',$request->agency_id ?? 0)->whereEmail($request->email)->first();
 
             if(!$user){
                 $user = new User;
                 $user->email = $request->email;
                 $user->name = $request->name ?? $request->email;
+                $user->agency_id = $request->agency_id ?? 0;
                 $user->save();
             }
 
@@ -134,7 +135,7 @@ class AuthController extends APIBaseController
                 $finduser = User::where('firebase_auth_id', $request->firebase_auth_id)->first();
 
                 if(!$finduser){
-                    $finduser = User::where('email', $request->email)->first();
+                    $finduser = User::where('agency_id',$request->agency_id ?? 0)->where('email', $request->email)->first();
 
                     if(!empty($finduser)) {
                         if($finduser->firebase_auth_id != $request->firebase_auth_id)
@@ -148,7 +149,8 @@ class AuthController extends APIBaseController
                         $finduser = User::create([
                             'email' => $request->email,
                             'firebase_auth_id' => $request->firebase_auth_id,
-                            'name' => $request->name
+                            'name' => $request->name,
+                            'agency_id' => $request->agency_id ?? 0
                         ]);
                     }
                 }

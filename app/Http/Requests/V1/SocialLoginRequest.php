@@ -10,7 +10,8 @@ class SocialLoginRequest  extends APIFormRequest
     public function rules(): array
     {
         return [
-            'email' => 'required|email'
+            'email' => 'required|email',
+            'agency_id' => 'nullable',
         ];
     }
 }
