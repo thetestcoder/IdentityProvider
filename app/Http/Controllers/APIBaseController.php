@@ -14,10 +14,10 @@ abstract class APIBaseController extends Controller
     protected function errorMessage($message, $code = Response::HTTP_INTERNAL_SERVER_ERROR): \Illuminate\Http\JsonResponse
     {
         $code = $code < 100 || $code > 599 ?  Response::HTTP_INTERNAL_SERVER_ERROR : $code;
-        return response()->json(['message' => $message], $code);
+        return response()->json(['message' => $message], (int)$code);
     }
     protected function successMessage($message, $data = [], $code = Response::HTTP_OK): \Illuminate\Http\JsonResponse
     {
-        return response()->json(['message' => $message, 'data' => $data], $code);
+        return response()->json(['message' => $message, 'data' => $data], (int)$code);
     }
 }
