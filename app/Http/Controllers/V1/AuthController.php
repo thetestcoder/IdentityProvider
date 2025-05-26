@@ -21,7 +21,8 @@ class AuthController extends APIBaseController
         try {
             $user = new User([
                 'name' => $request->name,
-                'email' => $request->email,
+                'email' => $request->email ?: null,
+                'phone' => $request->phone ?: null,
                 'password' => bcrypt($request->password),
                 'signup_url' => $request->site_url,
                 'is_user' => $request->is_user ?? 1,
@@ -41,7 +42,10 @@ class AuthController extends APIBaseController
     public function login(LoginRequest $request)
     {
        try {
-           $user = User::where('email', $request->email)->first();
+           $user = User::where(function($q) use ($request){
+                $q->where('email',$request->email)
+                    ->orWhere('phone', $request->phone);
+                })->where('agency_id', $request->agency_id ?? 0)->first();
            if(!$user){
                return $this->errorMessage('Unauthorized User', 422);
            }
@@ -118,12 +122,23 @@ class AuthController extends APIBaseController
     public function attemptSocialLogin(SocialLoginRequest $request)
     {
         try {
-            $user = User::where('agency_id',$request->agency_id ?? 0)->whereEmail($request->email)->first();
+            $user = User::where('agency_id',$request->agency_id ?? 0)->where(function($q) use ($request){
+                $q->where('email',$request->email)
+                    ->orWhere('phone', $request->phone);
+                })->first();
 
             if(!$user){
+                $name = $request->name;
+                if(!$name && $request->email) {
+                    $name = $request->email;
+                }
+                else {
+                    $name = $request->phone;
+                }
                 $user = new User;
-                $user->email = $request->email;
-                $user->name = $request->name ?? $request->email;
+                $user->email = $request->email ?: null;
+                $user->phone = $request->phone ?: null;
+                $user->name = $name;
                 $user->agency_id = $request->agency_id ?? 0;
                 $user->save();
             }
