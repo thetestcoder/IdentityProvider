@@ -43,9 +43,11 @@ class AuthController extends APIBaseController
     {
        try {
            $user = User::where(function($q) use ($request){
-                $q->where('email',$request->email)
-                    ->orWhere('phone', $request->phone);
-                })->where('agency_id', $request->agency_id ?? 0)->first();
+                $q->where('email',$request->email);
+                if($request->phone) {
+                    $q->where('phone', $request->phone);
+                }
+            })->where('agency_id', $request->agency_id ?? 0)->first();
            if(!$user){
                return $this->errorMessage('Unauthorized User', 422);
            }
@@ -123,9 +125,11 @@ class AuthController extends APIBaseController
     {
         try {
             $user = User::where('agency_id',$request->agency_id ?? 0)->where(function($q) use ($request){
-                $q->where('email',$request->email)
-                    ->orWhere('phone', $request->phone);
-                })->first();
+                $q->where('email',$request->email);
+                if($request->phone) {
+                    $q->where('phone', $request->phone);
+                }
+            })->first();
 
             if(!$user){
                 $name = $request->name;
