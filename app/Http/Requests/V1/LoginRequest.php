@@ -14,19 +14,13 @@ class LoginRequest  extends APIFormRequest
             'email' => [
                 'required_without:phone',
                 'nullable',
-                'email',
-                Rule::unique('users')->where(function ($query) {
-                    return $query->where('agency_id', request('agency_id', 0));
-                }),
+                'email'
             ],
 
             'phone' => [
                 'required_without:email',
                 'nullable',
-                'string',
-                Rule::unique('users')->where(function ($query) {
-                    return $query->where('agency_id', request('agency_id', 0));
-                }),
+                'string'
             ],
             'password' => 'required|string',
         ];
