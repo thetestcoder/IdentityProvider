@@ -133,12 +133,15 @@ class AuthController extends APIBaseController
 
             if(!$user){
                 $name = $request->name;
-                if(!$name && $request->email) {
-                    $name = $request->email;
+                if(!$name) {
+                    if($request->email) {
+                        $name = $request->email;
+                    }
+                    else {
+                        $name = $request->phone;
+                    }
                 }
-                else {
-                    $name = $request->phone;
-                }
+
                 $user = new User;
                 $user->email = $request->email ?: null;
                 $user->phone = $request->phone ?: null;
