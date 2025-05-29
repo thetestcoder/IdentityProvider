@@ -42,12 +42,21 @@ class AuthController extends APIBaseController
     public function login(LoginRequest $request)
     {
        try {
-           $user = User::where(function($q) use ($request){
-                $q->where('email',$request->email);
-                if($request->phone) {
-                    $q->where('phone', $request->phone);
-                }
-            })->where('agency_id', $request->agency_id ?? 0)->first();
+            $user = null;
+            if(filled($request->email) || filled($request->phone)) {
+                $user = User::where(function($q) use ($request){
+                    if(filled($request->email) && filled($request->phone)) {
+                        $q->where('email',$request->email)
+                            ->orWhere('phone', $request->phone);
+                    }
+                    elseif(filled($request->email)) {
+                        $q->where('email', $request->email);
+                    }
+                    elseif(filled($request->phone)) {
+                        $q->where('phone', $request->phone);
+                    }
+                })->where('agency_id', $request->agency_id ?? 0)->first();
+            }
            if(!$user){
                return $this->errorMessage('Unauthorized User', 422);
            }
@@ -124,12 +133,21 @@ class AuthController extends APIBaseController
     public function attemptSocialLogin(SocialLoginRequest $request)
     {
         try {
-            $user = User::where('agency_id',$request->agency_id ?? 0)->where(function($q) use ($request){
-                $q->where('email',$request->email);
-                if($request->phone) {
-                    $q->where('phone', $request->phone);
-                }
-            })->first();
+            $user = null;
+            if(filled($request->email) || filled($request->phone)) {
+                $user = User::where(function($q) use ($request){
+                    if(filled($request->email) && filled($request->phone)) {
+                        $q->where('email',$request->email)
+                            ->orWhere('phone', $request->phone);
+                    }
+                    elseif(filled($request->email)) {
+                        $q->where('email', $request->email);
+                    }
+                    elseif(filled($request->phone)) {
+                        $q->where('phone', $request->phone);
+                    }
+                })->where('agency_id', $request->agency_id ?? 0)->first();
+            }
 
             if(!$user){
                 $name = $request->name;
