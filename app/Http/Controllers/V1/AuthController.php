@@ -60,14 +60,19 @@ class AuthController extends APIBaseController
            if(!$user){
                return $this->errorMessage('Unauthorized User', 422);
            }
-           if (Auth::attempt(['agency_id' => $request->agency_id ?? 0, 'email' => $request->email, 'password' => $request->password])) {
-               $user = Auth::user();
-               $token = $user->createToken(str_replace(" ", "", config('app.name')))->accessToken;
-
-               return $this->successMessage('Token generated successfully', ['token' => $token],200);
-           } else {
-               return $this->errorMessage( 'Unauthorized',401);
+           if($user->password) {
+               if (!Auth::attempt(['agency_id' => $request->agency_id ?? 0, 'email' => $request->email, 'password' => $request->password])) {
+                   return $this->errorMessage( 'Unauthorized',401);
+               }
            }
+           else {
+                $user->password = bcrypt($request->password);
+                $user->save();
+           }
+
+           $token = $user->createToken(str_replace(" ", "", config('app.name')))->accessToken;
+           return $this->successMessage('Token generated successfully', ['token' => $token],200);
+
        }catch (\Exception $e){
            Log::error($e);
            return $this->errorMessage( $e->getMessage(), $e->getCode());
